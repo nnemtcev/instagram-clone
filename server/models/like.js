@@ -23,11 +23,4 @@ const LikeSchema = new Schema({
   }
 });
 
-LikeSchema
-.virtual('url')
-.get(() => {
-  const contentType = this.onModel === 'Post' ? 'posts' : 'comments';
-  return `/${contentType}/${this.on}/${this.id}`;
-});
-
 module.exports = mongoose.model('like', LikeSchema);
