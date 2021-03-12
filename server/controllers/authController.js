@@ -1,23 +1,29 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
 
 const userSignUpPost = (req, res, next) => {
   const { email, password, biography, profilePictureURL, username, signUpDate } = req.body;
 
-  const newUser = new User({
-    email,
-    password,
-    biography,
-    profilePictureURL,
-    username,
-    signUpDate
-  });
+  bcrypt.genSalt(10, (err, salt) => {
+    bcrypt.hash(password, salt, (err, password) => {
+      const newUser = new User({
+        email,
+        password,
+        biography,
+        profilePictureURL,
+        username,
+        signUpDate
+      });
 
-  newUser.save(err => {
-    if (err) {
-      return next(err);
-    }
+      newUser.save(err => {
+        if (err) {
+          return next(err);
+        }
 
-    res.send('USER HAS BEEN CREATED');
+        res.json(newUser);
+      });
+    });
   });
 };
 
