@@ -9,7 +9,8 @@ const PostSchema = new Schema({
   caption: {
     type: String,
     required: true,
-    maxlength: 1000
+    maxlength: 1000,
+    minlength: 5
   },
   timestamp: {
     type: Date,
