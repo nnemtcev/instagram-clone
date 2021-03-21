@@ -21,7 +21,7 @@ passport.use(
       }
 
       if (!user) {
-        return done(null, false);
+        return done(null, false, { message: 'A user with that email was not found.' });
       }
 
       bcrypt.compare(password, user.password, (err, success) => {
@@ -30,7 +30,7 @@ passport.use(
         }
 
         if (!success) {
-          return done(null, false);
+          return done(null, false, { message: 'Password entered was incorrect.' });
         }
 
         return done(null, user);
@@ -44,16 +44,16 @@ passport.use(
     secretOrKey: process.env.JWT_SECRET,
     jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken()
   }, (payload, done) => {
-    User.findOne({ email: payload.email }, (err, user) => {
+    User.findOne({ email: payload.user.email }, (err, user) => {
       if (err) {
         return done(err);
       }
 
       if (!user) {
-        return done(null, true);
+        return done(null, false, { message: 'Authorization was unsuccessful!' });
       }
 
-      return done(null, user);
+      return done(null, user, { message: 'Authorization was successful!' });
     });
   })
 );

@@ -9,6 +9,8 @@ router.post('/sign-up', authController.userSignUpPost);
 
 router.post('/log-in', (req, res, next) => {
   passport.authenticate('local', { session: false }, (err, user, info) => {
+    console.log(info);
+
     if (err) {
       return res.send('THERE WAS AN ERROR');
     }
@@ -23,8 +25,14 @@ router.post('/log-in', (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/protected-route', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.send('AUTHORIZATION WAS SUCCESSFUL');
+router.get('/protected-route', (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    if (!user) {
+      res.send('AUTHORIZATION WAS NOT SUCCESSFUL');
+    } else {
+      res.send('AUTHORIZATION WAS SUCCESSFUL');
+    }
+  })(req, res);
 });
 
 module.exports = router;
