@@ -7,7 +7,7 @@ const LikeSchema = new Schema({
     required: true,
     ref: 'User'
   },
-  on: {
+  contentId: {
     type: Schema.Types.ObjectId,
     required: true,
     refPath: 'onModel'
