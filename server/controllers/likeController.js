@@ -58,4 +58,12 @@ const unlikePost = (req, res, next) => {
   });
 };
 
-module.exports = { likePost, unlikePost };
+const likeComment = (req, res, next) => {
+  // TO-DO: FINISH THIS CONTROLLER
+};
+
+const unlikeComment = (req, res, next) => {
+  // TO-DO: FINISH THIS CONTROLLER
+};
+
+module.exports = { likePost, unlikePost, likeComment, unlikeComment };
