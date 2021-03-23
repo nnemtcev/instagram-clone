@@ -13,7 +13,7 @@ const CommentSchema = new Schema({
     minlength: 1,
     maxlength: 200
   },
-  timestamp: {
+  createdAt: {
     type: Date,
     required: true
   },

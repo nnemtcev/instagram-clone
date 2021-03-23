@@ -15,9 +15,9 @@ const LikeSchema = new Schema({
   onModel: {
     type: String,
     required: true,
-    enum: ['Post', 'Comment']
+    enum: ['photo', 'comment']
   },
-  timestamp: {
+  likedAt: {
     type: Date,
     required: true
   }

@@ -9,7 +9,6 @@ router.post('/sign-up', authController.userSignUpPost);
 
 router.post('/log-in', (req, res, next) => {
   passport.authenticate('local', { session: false }, (err, user, info) => {
-    console.log(info);
 
     if (err) {
       return res.send('THERE WAS AN ERROR');

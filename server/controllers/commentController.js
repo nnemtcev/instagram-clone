@@ -40,4 +40,18 @@ const leaveCommentOnPost = (req, res, next) => {
   });
 };
 
-module.exports = { getCommentsForPost, getCommentById, leaveCommentOnPost };
+const replyToComment = (req, res, next) => {
+  // TO-DO: FINISH THIS CONTROLLER
+};
+
+const deleteCommentOnPost = (req, res, next) => {
+  // TO-DO: FINISH THIS CONTROLLER
+};
+
+module.exports = {
+  getCommentsForPost,
+  getCommentById,
+  leaveCommentOnPost,
+  replyToComment,
+  deleteCommentOnPost
+};

@@ -28,7 +28,7 @@ const UserSchema = new Schema({
     minlength: 3,
     maxlength: 30
   },
-  signUpDate: {
+  createdAt: {
     type: Date,
     required: true
   }

@@ -12,7 +12,7 @@ const FollowSchema = new Schema({
     required: true,
     ref: 'User'
   },
-  timestamp: {
+  followedAt: {
     type: Date,
     required: true
   }

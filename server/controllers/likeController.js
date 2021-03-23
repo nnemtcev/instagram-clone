@@ -1,5 +1,5 @@
 const Like = require('../models/like');
-const Post = require('../models/post');
+const Post = require('../models/photo');
 
 const likePost = (req, res, next) => {
   Post.findById(req.params.postId, (err, post) => {
@@ -66,4 +66,9 @@ const unlikeComment = (req, res, next) => {
   // TO-DO: FINISH THIS CONTROLLER
 };
 
-module.exports = { likePost, unlikePost, likeComment, unlikeComment };
+module.exports = {
+  likePost,
+  unlikePost,
+  likeComment,
+  unlikeComment
+};

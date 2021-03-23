@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const PostSchema = new Schema({
+const PhotoSchema = new Schema({
   imageURL: {
     type: String,
     required: true
@@ -12,20 +12,21 @@ const PostSchema = new Schema({
     maxlength: 1000,
     minlength: 5
   },
-  timestamp: {
+  createdAt: {
     type: Date,
     required: true
   },
-  numLikes: {
-    type: Number,
-    required: true,
-    min: 0
-  },
-  userIdOfAuthor: {
+  author: {
     type: Schema.Types.ObjectId,
     required: true,
-    ref: 'User'
-  }
+    ref: 'user'
+  },
+  likes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'like'
+    }
+  ]
 });
 
-module.exports = mongoose.model('post', PostSchema);
+module.exports = mongoose.model('photo', PhotoSchema);

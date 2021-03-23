@@ -7,7 +7,7 @@ const passport = require('passport');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const postsRouter = require('./routes/posts');
+const postsRouter = require('./routes/photos');
 const User = require('./models/user');
 
 const app = express();
@@ -34,6 +34,6 @@ app.use(passport.initialize());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/posts', postsRouter);
+app.use('/photos', postsRouter);
 
 module.exports = app;
