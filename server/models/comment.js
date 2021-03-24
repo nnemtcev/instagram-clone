@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const CommentSchema = new Schema({
-  userIdOfCommenter: {
+  commenter: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
     required: true
   },
   body: {
@@ -20,11 +20,11 @@ const CommentSchema = new Schema({
   listOfReplies: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Comment',
+      ref: 'comment',
       required: true
     }
   ],
-  postId: {
+  photoId: {
     type: Schema.Types.ObjectId,
     required: true
   }

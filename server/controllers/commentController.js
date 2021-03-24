@@ -1,57 +1,53 @@
 const Comment = require('../models/comment');
 
-const getCommentsForPost = (req, res, next) => {
-  Comment.find({ postId: req.params.postId }, (err, comments) => {
-    if (err) {
-      return next(err);
-    }
+async function createCommentOnPhoto(req, res, next) {
+  try {
+    const comment = new Comment({
+      commenter: req.body.userId,
+      body: req.body.body,
+      createdAt: new Date(),
+      listOfReplies: [],
+      photoId: req.params.photoId
+    });
 
-    return res.json(comments);
-  });
-};
+    await newComment.save();
+    res(200).json({ comment });
+  } catch (error) {
+    next({
+      message: 'Could not create comment for this photo.',
+      statusCode: 400
+    });
+  }
+}
 
-const getCommentById = (req, res, next) => {
-  Comment.findById(req.params.commentId, (err, comment) => {
-    if (err) {
-      return next(err);
-    }
+async function deleteCommentOnPhoto(req, res, next) {
+  try {
+    await Comment.deleteOne({ _id: req.params.commentId });
+    res.status(200).send('Comment was successfully deleted!');
+  } catch (error) {
+    next({
+      message: 'Could not delete comment for this photo.',
+      statusCode: 400
+    });
+  }
+}
 
-    if (!comment) {
-      return next({ message: 'A comment with this ID does not exist.' });
-    }
-
-    return res.json(comment);
-  });
-};
-
-const leaveCommentOnPost = (req, res, next) => {
-  const newComment = new Comment({
-    userIdOfCommenter: req.body.userId,
-    body: req.body.body,
-    timestamp: new Date(),
-    listOfReplies: [],
-    postId: req.params.postId
-  });
-
-  newComment.save(err => {
-    if (err) {
-      return next(err);
-    }
-  });
-};
-
-const replyToComment = (req, res, next) => {
-  // TO-DO: FINISH THIS CONTROLLER
-};
-
-const deleteCommentOnPost = (req, res, next) => {
-  // TO-DO: FINISH THIS CONTROLLER
-};
+// TO-DO: FINISH THIS CONTROLLER
+// async function replyToComment(req, res, next) {
+//   try {
+//     const reply = new Comment({
+//       commenter: req.body.userId,
+//       body: req.body.body,
+//       createdAt: new Date(),
+//       listOfReplies: [],
+//       photoId: req.params.photoId
+//     });
+//   } catch (error) {
+//     
+//   }
+// }
 
 module.exports = {
-  getCommentsForPost,
-  getCommentById,
-  leaveCommentOnPost,
-  replyToComment,
-  deleteCommentOnPost
+  createCommentOnPhoto,
+  deleteCommentOnPhoto
 };

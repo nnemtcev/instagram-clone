@@ -50,10 +50,10 @@ passport.use(
       }
 
       if (!user) {
-        return done(null, false, { message: 'Authorization was unsuccessful!' });
+        return done(null, false, { message: 'You cannot access this page because you are not logged in.' });
       }
 
-      return done(null, user, { message: 'Authorization was successful!' });
+      return done(null, user);
     });
   })
 );

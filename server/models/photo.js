@@ -26,6 +26,12 @@ const PhotoSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'like'
     }
+  ],
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'comment'
+    }
   ]
 });
 

@@ -2,6 +2,7 @@ const { body, validationResult } = require('express-validator');
 
 const Photo = require('../models/photo');
 const Like = require('../models/like');
+const Comment = require('../models/comment');
 
 // Get a particular user's Instagram photos:
 
@@ -12,6 +13,7 @@ async function getUsersPhotos(req, res, next) {
                           .find({ author: userId })
 
     photos = await getPhotoLikes(photos);
+    photos = await getPhotoComments(photos);
 
     res.status(200).json({ photos });
   } catch (error) {
@@ -20,7 +22,7 @@ async function getUsersPhotos(req, res, next) {
       statusCode: 404
     });
   }
-};
+}
 
 // Get all the trending photos that have a significant number of likes:
 
@@ -30,10 +32,12 @@ async function getTrendingPhotos(req, res, next) {
                        .sort({ createdAt: 'desc' })
 
   photos = await getPhotoLikes(photos);
+  photos = await getPhotoComments(photos);
+
   photos.sort((a, b) => b.likes.length - a.likes.length);
 
   res.status(200).json({ photos });
-};
+}
 
 // Populate each Instagram photo with likes:
 
@@ -45,7 +49,32 @@ async function getPhotoLikes(photos) {
   }
 
   return photos;
-};
+}
+
+// Populate each Instagram photo with comments:
+
+async function getPhotoComments(photos) {
+  for (const photo of photos) {
+    const comments = await Comment.find({ photoId: photo._id });
+    getCommentLikes(comments);
+    photo.comments = comments;
+    photo.save();
+  }
+
+  return photos;
+}
+
+// Populate each comment on the Instagram photo with likes:
+
+async function getCommentLikes(comments) {
+  for (const comment of comments) {
+    const likes = await Like.find({ onModel: 'comment', contentId: comment._id });
+    comment.likes = likes;
+    comment.save();
+  }
+
+  return comments;
+}
 
 // Get a particular Instagram photo given the photoId:
 
@@ -55,6 +84,8 @@ async function getPhotoById(req, res, next) {
                     .findById(req.params.photoId);
 
     photo = await getPhotoLikes([photo]);
+    photo = await getPhotoComments([photo]);
+
     res.status(200).json({ photo: photo[0] });
   } catch (error) {
     next({
@@ -62,7 +93,7 @@ async function getPhotoById(req, res, next) {
       statusCode: 404
     });
   }
-};
+}
 
 // Post a photo on Instagram:
 
@@ -92,12 +123,12 @@ const postInstagramPhoto = [
         caption,
         createdAt: new Date(),
         author,
-        likes: []
+        likes: [],
+        comments: []
       });
 
       res.status(200).json({ photo });
     } catch (error) {
-        console.log(error);
         next({
           message: 'An error occurred while trying to post this photo.',
           statusCode: 503
@@ -118,7 +149,7 @@ async function deletePhotoById(req, res, next) {
       statusCode: 503
     });
   }
-};
+}
 
 // Edit a photo on Instagram that you posted previously:
 
@@ -140,7 +171,7 @@ async function editPhotoById(req, res, next) {
       statusCode: 503
     });
   }
-};
+}
 
 module.exports = {
   getUsersPhotos,
