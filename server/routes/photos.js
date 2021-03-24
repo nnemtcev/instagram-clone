@@ -7,16 +7,18 @@ const commentController = require('../controllers/commentController');
 
 // Route handlers for CRUD operations on posts:
 
-Router.get('/:userId', photoController.getUsersPhotos);
+Router.get('/', photoController.getTrendingPhotos);
+Router.get('/users/:userId', photoController.getUsersPhotos);
 Router.get('/:photoId', photoController.getPhotoById);
+
 Router.post('/', photoController.postInstagramPhoto);
 Router.delete('/:photoId', photoController.deletePhotoById);
 Router.patch('/:photoId', photoController.editPhotoById);
 
-// Route handlers for likes on posts:
+// Route handlers for creating and deleting likes on posts:
 
-Router.post('/:photoId/likes', likeController.likePost);
-Router.delete('/:photoId/likes', likeController.unlikePost);
+Router.post('/:photoId/likes', likeController.likePhoto);
+Router.delete('/:photoId/likes', likeController.unlikePhoto);
 
 // Route handlers for comments on posts:
 

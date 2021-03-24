@@ -1,74 +1,70 @@
 const Like = require('../models/like');
-const Post = require('../models/photo');
 
-const likePost = (req, res, next) => {
-  Post.findById(req.params.postId, (err, post) => {
-    if (err) {
-      return next(err);
-    }
-
-    if (!post) {
-      return next({ message: 'The post was not found.' });
-    }
-
-    post.numLikes++;
-    post.save();
-    
-    const newLike = new Like({
-      userIdOfLiker: req.body.userIdOfLiker,
-      contentId: req.params.postId,
-      onModel: 'Post',
-      timestamp: new Date()
-    });
-
-    newLike.save(err => {
-      if (err) {
-        return next(err);
-      }
-
-      res.send('POST SUCCESSFULLY LIKED');
-    });
+async function likePhoto(req, res, next) {
+  const newLike = new Like({
+    userWhoLiked: req.body.userWhoLiked,
+    contentId: req.params.photoId,
+    onModel: 'photo',
+    likedAt: new Date()
   });
-};
 
-const unlikePost = (req, res, next) => {
-  Post.findById(req.params.postId, (err, post) => {
-    if (err) {
-      return next(err);
-    }
-
-    if (!post) {
-      return next({ message: 'The post was not found.' });
-    }
-
-    post.numLikes--;
-    post.save();
-
-    Like.deleteOne({ userIdOfLiker: req.body.userIdOfLiker }, (err, like) => {
-      if (err) {
-        return next(err);
-      }
-
-      if (!like) {
-        return next({ message: 'You have not liked the post yet.' });
-      }
-
-      res.send('LIKE SUCCESSFULLY REMOVED FROM POST');
+  try {
+    await newLike.save();
+    res.send('Photo was successfully liked!');
+  } catch (error) {
+    next({
+      message: 'There was an error liking this photo.',
+      statusCode: 400
     });
+  }
+}
+
+async function unlikePhoto(req, res, next) {
+  try {
+    await Like.deleteOne({ userWhoLiked: req.body.userWhoLiked });
+    res.send('Photo was successfully deleted!');
+  } catch (error) {
+    next({
+      message: 'There was an error removing your like from this photo.',
+      statusCode: 400
+    });
+  }
+}
+
+async function likeComment(req, res, next) {
+  const newLike = new Like({
+    userWhoLiked: req.body.userWhoLiked,
+    contentId: req.params.commentId,
+    onModel: 'comment',
+    likedAt: new Date()
   });
-};
 
-const likeComment = (req, res, next) => {
-  // TO-DO: FINISH THIS CONTROLLER
-};
+  try {
+    await newLike.save();
+    res.send('Comment was successfully liked!');
+  } catch (error) {
+    next({
+      message: 'There was an error liking this comment.',
+      statusCode: 400
+    });
+  }
+}
 
-const unlikeComment = (req, res, next) => {
-  // TO-DO: FINISH THIS CONTROLLER
-};
+async function unlikeComment(req, res, next) {
+  try {
+    await Like.deleteOne({ userWhoLiked: req.body.userWhoLiked });
+    res.send('Comment was successfully deleted!');
+  } catch (error) {
+    next({
+      message: 'There was an error removing your like from this comment.',
+      statusCode: 400
+    });
+  }
+}
 
 module.exports = {
-  likePost,
-  unlikePost,
+  likePhoto,
+  unlikePhoto,
   likeComment,
   unlikeComment
 };

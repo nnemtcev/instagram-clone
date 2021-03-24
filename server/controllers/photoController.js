@@ -15,7 +15,10 @@ async function getUsersPhotos(req, res, next) {
 
     res.status(200).json({ photos });
   } catch (error) {
-    next(error);
+    next({
+      message: 'Could not find any photos by the given user.',
+      statusCode: 404
+    });
   }
 };
 
@@ -24,7 +27,7 @@ async function getUsersPhotos(req, res, next) {
 async function getTrendingPhotos(req, res, next) {
   let photos = await Photo
                        .find({})
-                       .sort({ createdAt: 'asc' })
+                       .sort({ createdAt: 'desc' })
 
   photos = await getPhotoLikes(photos);
   photos.sort((a, b) => b.likes.length - a.likes.length);
@@ -48,15 +51,15 @@ async function getPhotoLikes(photos) {
 
 async function getPhotoById(req, res, next) {
   try {
-    const photo = await Photo
-                    .findById(req.params.photoId)
-                    .populate('author');
+    let photo = await Photo
+                    .findById(req.params.photoId);
 
-    res.statusCode(200).json({ photo });
+    photo = await getPhotoLikes([photo]);
+    res.status(200).json({ photo: photo[0] });
   } catch (error) {
     next({
-      message: 'There was an error fetching the photo containing this photoId.',
-      statusCode: 503
+      message: 'Could not find photo with this photoId.',
+      statusCode: 404
     });
   }
 };
@@ -72,7 +75,7 @@ const postInstagramPhoto = [
 
     if (!result.isEmpty()) {
       next({
-        message: 'The image URL you provided is not a valid URL.',
+        message: 'The image URL you provided is not a valid URL. Please try again.',
         statusCode: 400
       });
     }
@@ -94,6 +97,7 @@ const postInstagramPhoto = [
 
       res.status(200).json({ photo });
     } catch (error) {
+        console.log(error);
         next({
           message: 'An error occurred while trying to post this photo.',
           statusCode: 503
@@ -110,7 +114,7 @@ async function deletePhotoById(req, res, next) {
     res.status(200).send('Photo was successfully deleted!');
   } catch (error) {
     next({
-      message: 'There was an error in deleting this photo.',
+      message: 'There was an error while trying to delete this photo.',
       statusCode: 503
     });
   }
@@ -123,11 +127,13 @@ async function editPhotoById(req, res, next) {
     const photo = await Photo.findById(req.params.photoId);
 
     if (!photo) {
-      res(404).send('A photo with the given photoId does not exist.');
+      res.status(404).send('A photo with the given photoId does not exist.');
     }
 
     photo.caption = req.body.caption;
     photo.save();
+
+    res.status(200).send('The photo has been successfully edited!');
   } catch (error) {
     next({
       message: 'There was an error in editing this photo.',
